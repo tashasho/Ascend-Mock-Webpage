@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z5 Ascend | Global B2B Enterprise Accelerator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        z5: {
+                            dark: '#0B0F19',
+                            card: '#131B2C',
+                            purple: '#8B5CF6',
+                            pink: '#EC4899',
+                            text: '#94A3B8'
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'hero-glow': 'conic-gradient(from 90deg at 50% 50%, #0B0F19 0%, #171717 50%, #0B0F19 100%)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0B0F19;
+            color: white;
+            overflow-x: hidden;
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #8B5CF6, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-gradient-main {
+            background: linear-gradient(to right, #8B5CF6, #EC4899);
+        }
+        .glass-card {
+            background: rgba(19, 27, 44, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(139, 92, 246, 0.15);
+        }
+        .glow-point {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* --- Animation System --- */
+        
+        /* Base Reveal Class */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        /* Active State (Triggered by JS) */
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Pop-in Variant (Scale) */
+        .pop-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .pop-in.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Stagger Delays */
+        .stagger-1 { transition-delay: 100ms; }
+        .stagger-2 { transition-delay: 200ms; }
+        .stagger-3 { transition-delay: 300ms; }
+        .stagger-4 { transition-delay: 400ms; }
+
+        /* Page Transition */
+        .page-section {
+            display: none;
+            /* Simple fade in for the container */
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        /* Nav & FAQ Styles */
+        .nav-link.active {
+            color: white;
+            position: relative;
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, #8B5CF6, #EC4899);
+            border-radius: 2px;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            transition: max-height 0.6s ease-in;
+        }
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-white/5 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="navigateTo('home')">
+                <!-- Ascend SVG Logo -->
+                <svg class="w-10 h-10 group-hover:scale-110 transition-transform duration-300 filter drop-shadow-[0_0_8px_rgba(139,92,246,0.4)]" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5L35 32H5L20 5Z" fill="url(#logo_gradient)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                    <path d="M20 12L28 27H12L20 12Z" fill="#0B0F19"/> <!-- Cutout to form the A -->
+                    <defs>
+                        <linearGradient id="logo_gradient" x1="5" y1="5" x2="35" y2="32" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#8B5CF6"/>
+                            <stop offset="1" stop-color="#EC4899"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold tracking-tight leading-none">ASCEND</span>
+                    <span class="text-[0.6rem] font-bold tracking-widest text-slate-500 leading-none mt-0.5">BY Z5 CAPITAL</span>
+                </div>
+            </div>
+            
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
+                <button onclick="navigateTo('home')" class="nav-link hover:text-white transition-colors active" data-target="home">Home</button>
+                <button onclick="navigateTo('mission')" class="nav-link hover:text-white transition-colors" data-target="mission">Mission</button>
+                <button onclick="navigateTo('tracks')" class="nav-link hover:text-white transition-colors" data-target="tracks">Tracks</button>
+                <button onclick="navigateTo('program')" class="nav-link hover:text-white transition-colors" data-target="program">Curriculum</button>
+                <button onclick="navigateTo('mentors')" class="nav-link hover:text-white transition-colors" data-target="mentors">Mentors</button>
+                <button onclick="navigateTo('faq')" class="nav-link hover:text-white transition-colors" data-target="faq">FAQ</button>
+                <a href="https://start.hopohopo.io/apply/4a614af593b234e2661f9dbdc046965f" target="_blank" class="px-5 py-2.5 rounded-full bg-white text-black font-bold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg shadow-white/10 hover:shadow-white/20">Apply Now</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white text-xl" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Nav Overlay -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-[#0B0F19] border-b border-white/10 p-6 flex flex-col gap-4 shadow-2xl">
+            <button onclick="navigateTo('home'); toggleMobileMenu()" class="text-left py-2 border-b border-white/5 text-slate-300">Home</button>
+            <button onclick="navigateTo('mission'); toggleMobileMenu()" class="text-left py-2 border-b border-white/5 text-slate-300">Mission</button>
+            <button onclick="navigateTo('tracks'); toggleMobileMenu()" class="text-left py-2 border-b border-white/5 text-slate-300">Tracks</button>
+            <button onclick="navigateTo('program'); toggleMobileMenu()" class="text-left py-2 border-b border-white/5 text-slate-300">Curriculum</button>
+            <button onclick="navigateTo('mentors'); toggleMobileMenu()" class="text-left py-2 border-b border-white/5 text-slate-300">Mentors</button>
+            <button onclick="navigateTo('faq'); toggleMobileMenu()" class="text-left py-2 border-b border-white/5 text-slate-300">FAQ</button>
+            <a href="https://start.hopohopo.io/apply/4a614af593b234e2661f9dbdc046965f" class="block w-full text-center py-3 bg-white text-black font-bold rounded-lg">Apply Now</a>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow pt-20 relative">
+        <div class="glow-point top-20 left-0 opacity-50 animate-pulse-slow"></div>
+        <div class="glow-point bottom-0 right-0 bg-pink-500/10 opacity-30 animate-pulse-slow" style="animation-delay: 1s;"></div>
+
+        <!-- PAGE: HOME -->
+        <div id="home" class="page-section active">
+            <!-- Hero -->
+            <header class="pt-20 pb-20 lg:pt-32 lg:pb-24 text-center px-6">
+                <div class="max-w-5xl mx-auto">
+                    <div class="reveal inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-xs font-semibold tracking-wide text-z5-purple mb-8 border-z5-purple/30">
+                        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                        APPLICATIONS OPEN FOR FALL 2025
+                    </div>
+                    
+                    <h1 class="reveal stagger-1 text-5xl lg:text-7xl font-bold tracking-tight leading-tight mb-8">
+                        From GitHub Repo to <br>
+                        <span class="text-gradient">Global Enterprise.</span>
+                    </h1>
+                    
+                    <p class="reveal stagger-2 text-lg lg:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+                        We invest in trajectory, not just metrics. A 4-week dual-track accelerator bridging India's top technical talent with Silicon Valley's ecosystem.
+                    </p>
+        
+                    <div class="reveal stagger-3 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <button onclick="navigateTo('tracks')" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-main text-white font-bold text-lg hover:opacity-90 hover:shadow-lg hover:shadow-purple-500/25 transition-all transform hover:-translate-y-1">
+                            Start Your Journey
+                        </button>
+                        <button onclick="navigateTo('mission')" class="w-full sm:w-auto px-8 py-4 rounded-full glass-card text-white font-semibold hover:bg-white/5 transition-all">
+                            Why Z5 Ascend?
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Value Prop Summary -->
+            <section class="py-16 px-6">
+                <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-6">
+                    <div class="glass-card p-8 rounded-2xl relative overflow-hidden group reveal stagger-1">
+                        <div class="absolute inset-0 bg-gradient-to-br from-z5-purple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <i class="fas fa-rocket text-3xl text-z5-purple mb-4 transform group-hover:scale-110 transition-transform"></i>
+                        <h3 class="text-xl font-bold mb-2">Startup Track</h3>
+                        <p class="text-slate-400 text-sm">For pre-formed teams. $40k investment + Silicon Valley immersion to close your seed round.</p>
+                        <button onclick="navigateTo('tracks')" class="text-z5-purple text-sm font-bold mt-4 hover:underline flex items-center gap-2">Learn More <i class="fas fa-arrow-right text-xs"></i></button>
+                    </div>
+                    
+                    <div class="glass-card p-8 rounded-2xl relative overflow-hidden group reveal stagger-2">
+                        <div class="absolute inset-0 bg-gradient-to-br from-z5-pink/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <i class="fas fa-user-astronaut text-3xl text-z5-pink mb-4 transform group-hover:scale-110 transition-transform"></i>
+                        <h3 class="text-xl font-bold mb-2">HPI Track</h3>
+                        <p class="text-slate-400 text-sm">For individuals. $5k grant, co-founder matching, and a path to funding.</p>
+                        <button onclick="navigateTo('tracks')" class="text-z5-pink text-sm font-bold mt-4 hover:underline flex items-center gap-2">Learn More <i class="fas fa-arrow-right text-xs"></i></button>
+                    </div>
+
+                    <div class="glass-card p-8 rounded-2xl relative overflow-hidden group reveal stagger-3">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <i class="fas fa-globe-americas text-3xl text-blue-400 mb-4 transform group-hover:scale-110 transition-transform"></i>
+                        <h3 class="text-xl font-bold mb-2">The Bridge</h3>
+                        <p class="text-slate-400 text-sm">Direct access to IIT ecosystems and StartX mentors. We connect the dots.</p>
+                        <button onclick="navigateTo('mission')" class="text-blue-400 text-sm font-bold mt-4 hover:underline flex items-center gap-2">Our Mission <i class="fas fa-arrow-right text-xs"></i></button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- PAGE: MISSION -->
+        <div id="mission" class="page-section">
+            <div class="max-w-7xl mx-auto px-6 py-20">
+                <div class="text-center mb-16">
+                    <h2 class="reveal text-4xl lg:text-5xl font-bold mb-6">Valuation is a metric.<br><span class="text-gradient">Value is a mindset.</span></h2>
+                    <p class="reveal stagger-1 text-slate-400 max-w-2xl mx-auto text-lg">We identify, fund, and accelerate India's most promising early-stage B2B enterprise talent by bridging emerging tech ecosystems with the resources of Silicon Valley.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-16 items-center mb-24">
+                    <div class="space-y-8">
+                        <div class="reveal stagger-1">
+                            <h3 class="text-2xl font-bold text-white mb-3">The Problem</h3>
+                            <p class="text-slate-400 leading-relaxed">
+                                India produces world-class engineers, but many early-stage founders lack the specialized "Valley" network needed to scale a B2B SaaS product globally. Great code often dies in the repo because the bridge to enterprise customers and global capital is missing.
+                            </p>
+                        </div>
+                        <div class="reveal stagger-2">
+                            <h3 class="text-2xl font-bold text-white mb-3">The Z5 Solution</h3>
+                            <p class="text-slate-400 leading-relaxed">
+                                Z5 Ascend is that bridge. We don't just write a check; we provide a 4-week intensive operational download. We bring the "Stanford StartX" methodology to Indian founders, focusing on Vertical AI and Enterprise SaaS.
+                            </p>
+                        </div>
+                        <div class="pt-4 reveal stagger-3">
+                            <h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Core Objectives</h4>
+                            <ul class="space-y-3">
+                                <li class="flex items-center gap-3 text-slate-300"><i class="fas fa-check-circle text-z5-purple"></i> Identify & Invest in 8-10 high-potential ventures.</li>
+                                <li class="flex items-center gap-3 text-slate-300"><i class="fas fa-check-circle text-z5-purple"></i> Accelerate Product-Market Fit & GTM.</li>
+                                <li class="flex items-center gap-3 text-slate-300"><i class="fas fa-check-circle text-z5-purple"></i> Build a lasting alumni community across IITs.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="relative reveal stagger-2">
+                        <div class="absolute inset-0 bg-gradient-main blur-3xl opacity-20 rounded-full"></div>
+                        <div class="glass-card p-10 rounded-2xl relative border-l-4 border-l-pink-500">
+                            <h3 class="text-2xl font-bold mb-6">Giving Back</h3>
+                            <p class="text-slate-400 mb-6">
+                                We believe in the circle of innovation. Z5 Capital pledges to donate a portion of our equity stake back to partner institution foundations (E-Cells/Incubators) upon liquidity events.
+                            </p>
+                            <div class="flex items-center gap-4 text-sm text-slate-500 font-semibold uppercase tracking-wider">
+                                <span><i class="fas fa-hand-holding-heart mr-2 text-pink-500"></i> Empowering Ecosystems</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: TRACKS -->
+        <div id="tracks" class="page-section">
+            <div class="max-w-7xl mx-auto px-6 py-20">
+                <div class="text-center mb-16">
+                    <h2 class="reveal text-3xl lg:text-5xl font-bold mb-4">Choose Your Path</h2>
+                    <p class="reveal stagger-1 text-slate-400">Two distinct entry points. One unified cohort.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <!-- Startup Track -->
+                    <div class="reveal stagger-1 glass-card rounded-3xl overflow-hidden border-t-4 border-t-z5-purple flex flex-col hover:shadow-purple-500/10">
+                        <div class="p-8 bg-z5-purple/5">
+                            <div class="w-12 h-12 rounded-lg bg-z5-purple text-white flex items-center justify-center text-xl mb-6 shadow-lg shadow-purple-500/40">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-white mb-2">Startup Track</h3>
+                            <p class="text-slate-400">For pre-formed teams with a product vision.</p>
+                        </div>
+                        <div class="p-8 flex-grow space-y-6">
+                            <div>
+                                <h4 class="text-sm text-slate-500 uppercase tracking-widest font-bold mb-2">The Offer</h4>
+                                <div class="text-4xl font-bold text-white pop-in active">$40,000</div>
+                                <div class="text-slate-400 text-sm">Investment for 4% Equity (Post-Money SAFE)</div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm text-slate-500 uppercase tracking-widest font-bold mb-2">Eligibility</h4>
+                                <ul class="space-y-2 text-slate-300 text-sm">
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-z5-purple mt-1"></i> Pre-seed to Seed stage.</li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-z5-purple mt-1"></i> B2B Enterprise / Vertical AI focus.</li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-z5-purple mt-1"></i> Minimum 2 co-founders.</li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-z5-purple mt-1"></i> MVP or functional prototype required.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="p-8 border-t border-white/5">
+                            <a href="https://start.hopohopo.io/apply/4a614af593b234e2661f9dbdc046965f" class="block w-full py-3 text-center rounded-lg bg-z5-purple hover:bg-purple-600 text-white font-bold transition-all transform hover:scale-[1.02]">Apply as Startup</a>
+                        </div>
+                    </div>
+
+                    <!-- HPI Track -->
+                    <div class="reveal stagger-2 glass-card rounded-3xl overflow-hidden border-t-4 border-t-z5-pink flex flex-col hover:shadow-pink-500/10">
+                        <div class="p-8 bg-z5-pink/5">
+                            <div class="w-12 h-12 rounded-lg bg-z5-pink text-white flex items-center justify-center text-xl mb-6 shadow-lg shadow-pink-500/40">
+                                <i class="fas fa-user-astronaut"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-white mb-2">HPI Track</h3>
+                            <p class="text-slate-400">For High-Potential Individuals looking for co-founders.</p>
+                        </div>
+                        <div class="p-8 flex-grow space-y-6">
+                            <div>
+                                <h4 class="text-sm text-slate-500 uppercase tracking-widest font-bold mb-2">The Offer</h4>
+                                <div class="text-4xl font-bold text-white pop-in active">$5,000</div>
+                                <div class="text-slate-400 text-sm">Non-dilutive Grant + Co-founder Matching</div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm text-slate-500 uppercase tracking-widest font-bold mb-2">Eligibility</h4>
+                                <ul class="space-y-2 text-slate-300 text-sm">
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-z5-pink mt-1"></i> Technical expert or domain specialist.</li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-z5-pink mt-1"></i> Deep insight into a specific enterprise problem.</li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-z5-pink mt-1"></i> Ambition to build a global company.</li>
+                                    <li class="flex items-start gap-2"><i class="fas fa-check text-z5-pink mt-1"></i> Conversion to investment if team is formed.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="p-8 border-t border-white/5">
+                            <a href="https://start.hopohopo.io/apply/4a614af593b234e2661f9dbdc046965f" class="block w-full py-3 text-center rounded-lg bg-z5-pink hover:bg-pink-600 text-white font-bold transition-all transform hover:scale-[1.02]">Apply as Individual</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: CURRICULUM -->
+        <div id="program" class="page-section">
+            <div class="max-w-7xl mx-auto px-6 py-20">
+                <div class="text-center mb-16">
+                    <h2 class="reveal text-3xl lg:text-5xl font-bold mb-4">4 Weeks to <span class="text-gradient">Ascend</span></h2>
+                    <p class="reveal stagger-1 text-slate-400">A hybrid model designed for speed. 3 Weeks Virtual. 1 Week Immersion.</p>
+                </div>
+
+                <div class="max-w-4xl mx-auto relative">
+                    <!-- Vertical Line -->
+                    <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-white/10 hidden md:block"></div>
+
+                    <div class="space-y-12">
+                        <!-- Week 1 -->
+                        <div class="reveal stagger-1 relative flex flex-col md:flex-row gap-8 items-start group">
+                            <div class="w-16 h-16 rounded-full bg-[#0B0F19] border-2 border-z5-purple flex items-center justify-center text-z5-purple font-bold z-10 shrink-0 text-xl shadow-[0_0_15px_rgba(139,92,246,0.3)] group-hover:shadow-[0_0_25px_rgba(139,92,246,0.6)] transition-shadow">01</div>
+                            <div class="glass-card p-8 rounded-xl flex-grow">
+                                <span class="text-xs font-bold text-z5-purple uppercase tracking-widest mb-2 block">Week 1 (Virtual)</span>
+                                <h3 class="text-2xl font-bold text-white mb-2">Foundation & Formation</h3>
+                                <p class="text-slate-400 mb-4">Refining the Value Proposition, Market Mapping, and for HPIs—intensive Team Formation activities.</p>
+                                <div class="p-4 bg-white/5 rounded-lg border border-white/5">
+                                    <span class="text-xs text-slate-500 uppercase font-bold">Key Deliverable</span>
+                                    <p class="text-sm text-slate-300">Refined Value Prop & Draft Team Charter.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Week 2 -->
+                        <div class="reveal stagger-2 relative flex flex-col md:flex-row gap-8 items-start group">
+                            <div class="w-16 h-16 rounded-full bg-[#0B0F19] border-2 border-indigo-500 flex items-center justify-center text-indigo-500 font-bold z-10 shrink-0 text-xl shadow-[0_0_15px_rgba(99,102,241,0.3)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.6)] transition-shadow">02</div>
+                            <div class="glass-card p-8 rounded-xl flex-grow">
+                                <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2 block">Week 2 (Virtual)</span>
+                                <h3 class="text-2xl font-bold text-white mb-2">Go-to-Market Strategy</h3>
+                                <p class="text-slate-400 mb-4">B2B Sales Funnels, Pricing Strategy, and Customer Discovery for new ventures. Moving from "idea" to "business".</p>
+                                <div class="p-4 bg-white/5 rounded-lg border border-white/5">
+                                    <span class="text-xs text-slate-500 uppercase font-bold">Key Deliverable</span>
+                                    <p class="text-sm text-slate-300">Draft GTM & Sales Playbook.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Week 3 -->
+                         <div class="reveal stagger-3 relative flex flex-col md:flex-row gap-8 items-start group">
+                            <div class="w-16 h-16 rounded-full bg-[#0B0F19] border-2 border-blue-500 flex items-center justify-center text-blue-500 font-bold z-10 shrink-0 text-xl shadow-[0_0_15px_rgba(59,130,246,0.3)] group-hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transition-shadow">03</div>
+                            <div class="glass-card p-8 rounded-xl flex-grow">
+                                <span class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-2 block">Week 3 (Virtual)</span>
+                                <h3 class="text-2xl font-bold text-white mb-2">Fundraising & Pitch</h3>
+                                <p class="text-slate-400 mb-4">The Art of the Pitch, Understanding Term Sheets, and building a Data Room. Preparing for the Valley.</p>
+                                <div class="p-4 bg-white/5 rounded-lg border border-white/5">
+                                    <span class="text-xs text-slate-500 uppercase font-bold">Key Deliverable</span>
+                                    <p class="text-sm text-slate-300">Finalized Investor Pitch Deck.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Week 4 -->
+                        <div class="reveal stagger-4 relative flex flex-col md:flex-row gap-8 items-start group">
+                            <div class="w-16 h-16 rounded-full bg-gradient-main flex items-center justify-center text-white font-bold z-10 shrink-0 text-xl shadow-[0_0_20px_rgba(236,72,153,0.6)] animate-pulse">04</div>
+                            <div class="glass-card p-8 rounded-xl flex-grow border-l-4 border-l-z5-pink relative overflow-hidden">
+                                <div class="absolute right-0 top-0 w-32 h-32 bg-z5-pink/20 blur-3xl rounded-full"></div>
+                                <span class="text-xs font-bold text-white uppercase tracking-widest mb-2 block px-2 py-1 bg-white/10 rounded w-fit">In-Person • Bay Area</span>
+                                <h3 class="text-2xl font-bold text-white mb-2">Silicon Valley Immersion</h3>
+                                <p class="text-slate-400 mb-4">Network, Pitch, and Close. Visits to Google/NVIDIA, workshops at StartX/YC, and Demo Day.</p>
+                                <div class="p-4 bg-white/5 rounded-lg border border-white/5">
+                                    <span class="text-xs text-slate-500 uppercase font-bold">Key Deliverable</span>
+                                    <p class="text-sm text-slate-300">Pitch to curated group of Seed VCs and Angels.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: MENTORS -->
+        <div id="mentors" class="page-section">
+            <div class="max-w-7xl mx-auto px-6 py-20">
+                <div class="text-center mb-16">
+                    <h2 class="reveal text-3xl lg:text-5xl font-bold mb-4">Built by Builders</h2>
+                    <p class="reveal stagger-1 text-slate-400">We don't just allocate capital. We allocate experience.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-20">
+                     <!-- Arun -->
+                     <div class="reveal stagger-1 glass-card p-8 rounded-2xl flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left">
+                        <div class="w-24 h-24 rounded-full bg-slate-700 flex items-center justify-center text-2xl font-bold shrink-0 ring-4 ring-white/5">AR</div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">Arun Ramamoorthy</h3>
+                            <p class="text-z5-purple text-sm mb-4">Partner, Z5 Capital</p>
+                            <p class="text-slate-400 italic mb-4">"The bridge between India and Silicon Valley isn't just about travel—it's about mindset. Many VCs offer capital, but we focus on the operational leverage that turns a great GitHub repo into a Category-Defining Enterprise product."</p>
+                            <div class="flex gap-2 justify-center md:justify-start">
+                                <span class="text-xs px-2 py-1 bg-white/5 rounded">Enterprise GTM</span>
+                                <span class="text-xs px-2 py-1 bg-white/5 rounded">Scaling</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nanda -->
+                    <div class="reveal stagger-2 glass-card p-8 rounded-2xl flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left">
+                        <div class="w-24 h-24 rounded-full bg-slate-700 flex items-center justify-center text-2xl font-bold shrink-0 ring-4 ring-white/5">NK</div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">Nanda Krish</h3>
+                            <p class="text-z5-pink text-sm mb-4">Serial Entrepreneur & Partner</p>
+                            <p class="text-slate-400 italic mb-4">"Building a product is hard. Building a company is harder. We don't just sit on your board; we get in the trenches. Our goal is to de-risk your journey from day zero so you can focus on innovation."</p>
+                            <div class="flex gap-2 justify-center md:justify-start">
+                                <span class="text-xs px-2 py-1 bg-white/5 rounded">Strategy</span>
+                                <span class="text-xs px-2 py-1 bg-white/5 rounded">Fundraising</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mentor Archetypes -->
+                <h3 class="reveal stagger-3 text-xl font-bold text-white mb-8 text-center">Plus Access to Experts In...</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal stagger-4">
+                    <div class="glass-card p-6 rounded-xl text-center group">
+                        <i class="fas fa-search-dollar text-2xl text-green-400 mb-3 transform group-hover:scale-125 transition-transform"></i>
+                        <h4 class="font-bold">B2B Sales</h4>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl text-center group">
+                        <i class="fas fa-brain text-2xl text-purple-400 mb-3 transform group-hover:scale-125 transition-transform"></i>
+                        <h4 class="font-bold">Vertical AI</h4>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl text-center group">
+                        <i class="fas fa-cloud text-2xl text-blue-400 mb-3 transform group-hover:scale-125 transition-transform"></i>
+                        <h4 class="font-bold">Cloud Infra</h4>
+                    </div>
+                    <div class="glass-card p-6 rounded-xl text-center group">
+                        <i class="fas fa-handshake text-2xl text-pink-400 mb-3 transform group-hover:scale-125 transition-transform"></i>
+                        <h4 class="font-bold">US Market Entry</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: FAQ -->
+        <div id="faq" class="page-section">
+            <div class="max-w-3xl mx-auto px-6 py-20">
+                <div class="text-center mb-16">
+                    <h2 class="reveal text-3xl lg:text-5xl font-bold mb-4">FAQs</h2>
+                    <p class="reveal stagger-1 text-slate-400">Everything you need to know about joining Z5 Ascend.</p>
+                </div>
+
+                <div class="space-y-4 reveal stagger-2">
+                    <div class="glass-card rounded-xl overflow-hidden faq-item cursor-pointer" onclick="toggleFaq(this)">
+                        <div class="p-6 flex justify-between items-center">
+                            <h3 class="font-bold text-white">What is the difference between the two tracks?</h3>
+                            <i class="fas fa-chevron-down text-slate-500 faq-icon"></i>
+                        </div>
+                        <div class="faq-answer bg-white/5 px-6">
+                            <div class="pb-6 text-slate-300 text-sm leading-relaxed">
+                                The <strong>Startup Track</strong> is for pre-formed teams (2+ co-founders) with an MVP/Prototype who are ready to scale. You receive $40k investment. <br><br>
+                                The <strong>HPI Track</strong> is for individuals (engineers, domain experts) who haven't found a co-founder yet. You receive a $5k grant and structured matching support. If you form a team, you become eligible for the investment.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-xl overflow-hidden faq-item cursor-pointer" onclick="toggleFaq(this)">
+                        <div class="p-6 flex justify-between items-center">
+                            <h3 class="font-bold text-white">Is the program remote or in-person?</h3>
+                            <i class="fas fa-chevron-down text-slate-500 faq-icon"></i>
+                        </div>
+                        <div class="faq-answer bg-white/5 px-6">
+                            <div class="pb-6 text-slate-300 text-sm leading-relaxed">
+                                It is a hybrid model. Weeks 1-3 are virtual (remote), allowing you to participate from anywhere in India. Week 4 is a fully immersive in-person week in the San Francisco Bay Area (Silicon Valley).
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-xl overflow-hidden faq-item cursor-pointer" onclick="toggleFaq(this)">
+                        <div class="p-6 flex justify-between items-center">
+                            <h3 class="font-bold text-white">Do you cover travel costs for the immersion week?</h3>
+                            <i class="fas fa-chevron-down text-slate-500 faq-icon"></i>
+                        </div>
+                        <div class="faq-answer bg-white/5 px-6">
+                            <div class="pb-6 text-slate-300 text-sm leading-relaxed">
+                                Yes. Z5 Capital covers travel (flights) and accommodation costs for the Immersion Week in Silicon Valley for accepted founders.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-xl overflow-hidden faq-item cursor-pointer" onclick="toggleFaq(this)">
+                        <div class="p-6 flex justify-between items-center">
+                            <h3 class="font-bold text-white">What is the selection process timeline?</h3>
+                            <i class="fas fa-chevron-down text-slate-500 faq-icon"></i>
+                        </div>
+                        <div class="faq-answer bg-white/5 px-6">
+                            <div class="pb-6 text-slate-300 text-sm leading-relaxed">
+                                The discovery and application phase lasts 4-6 weeks. Once applications close, we have a 2-week selection period involving committee reviews and virtual interviews before announcing the final cohort.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12 reveal stagger-3">
+                     <p class="text-slate-400 mb-4">Still have questions?</p>
+                     <a href="mailto:apply@z5capital.com" class="text-z5-purple hover:text-white font-bold">Contact the team &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5 bg-[#0B0F19]">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="flex items-center justify-center gap-2 mb-6 opacity-70 hover:opacity-100 transition-opacity">
+                 <!-- Ascend SVG Logo (Footer Version) -->
+                 <svg class="w-8 h-8" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5L35 32H5L20 5Z" fill="url(#logo_gradient)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                    <path d="M20 12L28 27H12L20 12Z" fill="#0B0F19"/> 
+                </svg>
+                <span class="text-lg font-bold">Z5 Capital</span>
+            </div>
+            <p class="text-slate-500 text-sm mb-8">Building the bridge between Indian Innovation and Global Capital.</p>
+            <div class="flex justify-center gap-6 text-slate-400 text-sm">
+                <a href="#" class="hover:text-white transition-colors">Twitter</a>
+                <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+                <a href="mailto:apply@z5capital.com" class="hover:text-white transition-colors">Contact Us</a>
+            </div>
+            <p class="text-slate-600 text-xs mt-8">© 2025 Z5 Capital. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Animation Observer Setup ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        function setupAnimations() {
+            // Observe reveal elements
+            document.querySelectorAll('.reveal').forEach(el => {
+                observer.observe(el);
+            });
+            // Observe pop-in elements
+            document.querySelectorAll('.pop-in').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+
+        // --- Router Logic ---
+        function navigateTo(pageId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show target section
+            const target = document.getElementById(pageId);
+            if(target) {
+                target.classList.add('active');
+                window.scrollTo(0, 0); // Reset scroll
+            }
+
+            // Update Nav State
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.classList.remove('active');
+                if(el.dataset.target === pageId) {
+                    el.classList.add('active');
+                }
+            });
+
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if(!mobileMenu.classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Accordion Logic
+        function toggleFaq(element) {
+            const wasActive = element.classList.contains('active');
+            
+            // Close all others
+            document.querySelectorAll('.faq-item').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Toggle clicked one
+            if(!wasActive) {
+                element.classList.add('active');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            navigateTo('home');
+            setupAnimations();
+        });
+    </script>
+</body>
+</html>
